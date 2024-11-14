@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversor de Video a MP3</title>
+</head>
+<body>
+  <h1>Convertir Video a MP3</h1>
+  <label for="videoUrl">URL del Video:</label><br>
+  <input type="text" id="videoUrl" placeholder="Pega la URL del video" style="width: 300px;"><br><br>
+  <button onclick="downloadVideoAsMP3()">Descargar MP3</button>
+
+  <script>
+    // Función para convertir el video a mp3 y descargarlo
+    function downloadVideoAsMP3() {
+      const videoUrl = document.getElementById('videoUrl').value;
+
+      if (!videoUrl) {
+        alert("Por favor, ingresa la URL del video.");
+        return;
+      }
+
+      const apiUrl = 'https://ytmp3.cc/api'; // Reemplaza con la URL de la API que vayas a usar
+
+      // Realizamos la solicitud a la API para obtener el enlace de descarga
+      fetch(`${apiUrl}?url=${encodeURIComponent(videoUrl)}&format=mp3`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Si la API responde con éxito, obtener el enlace de descarga
+            const downloadLink = data.mp3DownloadUrl;
+            // Crear un enlace de descarga
+            const a = document.createElement('a');
+            a.href = downloadLink;
+            a.download = 'audio.mp3';
+            document.body.appendChild(a);
+            a.click();  // Simula el clic para iniciar la descarga
+            document.body.removeChild(a);
+          } else {
+            console.error('Error al obtener el enlace de descarga:', data.error);
+            alert("Hubo un error al intentar convertir el video.");
+          }
+        })
+        .catch(error => {
+          console.error('Error en la solicitud:', error);
+          alert("Hubo un error en la conexión.");
+        });
+    }
+  </script>
+</body>
+</html>
